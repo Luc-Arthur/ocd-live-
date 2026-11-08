@@ -3,8 +3,16 @@ REM OCD Live - installation + lancement + tunnel Cloudflare (Windows)
 cd /d %~dp0
 
 if not exist vendor\inertiajs (
-    echo [1/4] Installation d'Inertia cote Laravel...
-    call composer require inertiajs/inertia-laravel:^2.0 --no-interaction
+    echo [1/4] Installation des dependances PHP...
+    call composer install --no-interaction
+)
+if not exist .env (
+    echo Creation du fichier .env et de la cle de l'application...
+    copy .env.example .env >nul
+    php artisan key:generate --force
+)
+if not exist database\database.sqlite (
+    type nul > database\database.sqlite
 )
 if not exist node_modules\vue (
     echo [2/4] Installation des dependances front...
