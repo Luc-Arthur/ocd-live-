@@ -1,0 +1,190 @@
+@import 'tailwindcss';
+
+@source '../**/*.blade.php';
+@source '../**/*.js';
+@source '../**/*.vue';
+
+@theme {
+    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif;
+    --font-display: 'Bricolage Grotesque', 'Instrument Sans', ui-sans-serif, sans-serif;
+
+    --color-cream: #fbf6ef;
+    --color-sand: #f2e8db;
+    --color-sand-deep: #e6d6c2;
+    --color-ink: #1c1410;
+    --color-ink-soft: #5b4b40;
+    --color-ink-mute: #8a796c;
+    --color-ember: #d9622b;
+    --color-ember-dark: #b44e1f;
+    --color-glow: #f6c77d;
+    --color-night: #1f1611;
+    --color-night-soft: #2c211a;
+    --color-live: #e5383b;
+    --color-leaf: #2f7d4f;
+
+    --shadow-card: 0 1px 0 rgb(28 20 16 / 0.04), 0 12px 32px -16px rgb(28 20 16 / 0.18);
+    --shadow-glow: 0 0 0 1px rgb(217 98 43 / 0.25), 0 16px 40px -12px rgb(217 98 43 / 0.45);
+
+    /* Décélération franche : arrivée assurée, sans rebond */
+    --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@layer base {
+    @media (prefers-reduced-motion: no-preference) {
+        html {
+            scroll-behavior: smooth;
+        }
+    }
+    ::selection {
+        background: rgb(217 98 43 / 0.22);
+        color: var(--color-ink);
+    }
+    body {
+        background: var(--color-cream);
+        color: var(--color-ink);
+        font-family: var(--font-sans);
+    }
+    h1, h2, h3, h4 {
+        font-family: var(--font-display);
+        letter-spacing: -0.02em;
+    }
+    :focus-visible {
+        outline: 2px solid var(--color-ember);
+        outline-offset: 2px;
+    }
+}
+
+@utility btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-5 py-3 text-sm font-semibold transition active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-50;
+}
+@utility btn-primary {
+    @apply btn bg-ember text-white hover:bg-ember-dark;
+}
+@utility btn-dark {
+    @apply btn bg-ink text-cream hover:bg-night-soft;
+}
+@utility btn-ghost {
+    @apply btn border border-sand-deep bg-white/60 text-ink hover:border-ink-mute;
+}
+@utility field {
+    @apply w-full rounded-xl border border-sand-deep bg-white px-4 py-3 text-[15px] text-ink placeholder:text-ink-mute/70 focus:border-ember focus:ring-2 focus:ring-ember/20 focus:outline-none;
+}
+@utility label {
+    @apply mb-1.5 block text-sm font-medium text-ink;
+}
+@utility eyebrow {
+    @apply text-xs font-semibold tracking-[0.14em] text-ember uppercase;
+}
+
+@keyframes pulse-ring {
+    0% { transform: scale(0.6); opacity: 0.9; }
+    100% { transform: scale(2.6); opacity: 0; }
+}
+.pulse-ring {
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: pulse-ring 2.2s cubic-bezier(0.2, 0.6, 0.3, 1) infinite;
+}
+@keyframes blink {
+    50% { opacity: 0.35; }
+}
+.live-dot {
+    animation: blink 1.4s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+    .pulse-ring, .live-dot { animation: none; }
+}
+
+/* ------------------------------------------------------------------
+   Transitions d'état (Vue <Transition>) — sortie plus rapide que l'entrée
+   ------------------------------------------------------------------ */
+
+/* Étapes de réservation, mois du calendrier, jour du planning : ça glisse dans le sens du parcours */
+.slide-next-enter-active, .slide-prev-enter-active {
+    transition: opacity 0.32s var(--ease-out-expo), translate 0.32s var(--ease-out-expo);
+}
+.slide-next-leave-active, .slide-prev-leave-active {
+    transition: opacity 0.14s ease-in, translate 0.14s ease-in;
+}
+.slide-next-enter-from { opacity: 0; translate: 28px 0; }
+.slide-next-leave-to { opacity: 0; translate: -14px 0; }
+.slide-prev-enter-from { opacity: 0; translate: -28px 0; }
+.slide-prev-leave-to { opacity: 0; translate: 14px 0; }
+
+/* Récap « Ton live » : le choix vient s'inscrire dans le billet, avec un éclat chaud */
+.recap-enter-active {
+    transition: opacity 0.4s var(--ease-out-expo), translate 0.4s var(--ease-out-expo), filter 0.4s var(--ease-out-expo);
+    animation: glow-flash 1.1s ease-out;
+}
+.recap-leave-active { transition: opacity 0.12s ease-in; }
+.recap-enter-from { opacity: 0; translate: 0 8px; filter: blur(3px); }
+.recap-leave-to { opacity: 0; }
+@keyframes glow-flash {
+    from { color: var(--color-glow); }
+}
+
+.recap-row-enter-active, .land-enter-active {
+    transition: opacity 0.3s var(--ease-out-expo), translate 0.3s var(--ease-out-expo);
+}
+.recap-row-leave-active, .land-leave-active { transition: opacity 0.15s ease-in; }
+.recap-row-enter-from, .land-enter-from { opacity: 0; translate: 0 6px; }
+.recap-row-leave-to, .land-leave-to { opacity: 0; }
+
+/* Messages d'erreur */
+.msg-in { animation: msg-in 0.22s var(--ease-out-expo); }
+@keyframes msg-in {
+    from { opacity: 0; translate: 0 -4px; }
+}
+
+/* Espace équipe : une nouvelle réservation arrive en haut, les autres descendent */
+.notif-enter-active {
+    transition: opacity 0.5s var(--ease-out-expo), translate 0.5s var(--ease-out-expo);
+    animation: notif-flash 1.6s ease-out;
+}
+.notif-enter-from { opacity: 0; translate: 0 -10px; }
+.notif-leave-active { transition: opacity 0.15s ease-in; }
+.notif-leave-to { opacity: 0; }
+.notif-move { transition: transform 0.45s var(--ease-out-expo); }
+@keyframes notif-flash {
+    from { background-color: rgb(229 56 59 / 0.3); }
+}
+
+.row-enter-active { transition: opacity 0.4s ease-out; animation: row-flash 1.6s ease-out; }
+.row-enter-from { opacity: 0; }
+.row-leave-active { transition: opacity 0.15s ease-in; }
+.row-leave-to { opacity: 0; }
+@keyframes row-flash {
+    from { background-color: rgb(217 98 43 / 0.14); }
+}
+
+/* Chiffre qui change */
+.tick-enter-active {
+    transition: opacity 0.35s var(--ease-out-expo), translate 0.35s var(--ease-out-expo);
+    animation: tick-flash 1.2s ease-out;
+}
+.tick-leave-active { transition: opacity 0.12s ease-in, translate 0.12s ease-in; }
+.tick-enter-from { opacity: 0; translate: 0 10px; }
+.tick-leave-to { opacity: 0; translate: 0 -8px; }
+@keyframes tick-flash {
+    from { color: var(--color-ember); }
+}
+
+/* Pastille de compteur */
+.pop-enter-active { transition: opacity 0.2s ease-out, scale 0.35s var(--ease-out-expo); }
+.pop-leave-active { transition: opacity 0.1s ease-in, scale 0.1s ease-in; }
+.pop-enter-from { opacity: 0; scale: 0.4; }
+.pop-leave-to { opacity: 0; scale: 0.7; }
+
+/* Mouvement réduit : plus de déplacement ni de flou, les fondus et les éclats de couleur restent */
+@media (prefers-reduced-motion: reduce) {
+    [class*='-enter-from'], [class*='-leave-to'] {
+        translate: none !important;
+        scale: none !important;
+        filter: none !important;
+    }
+    .notif-move { transition: none; }
+    .msg-in { animation-name: fade-in; }
+}
+@keyframes fade-in {
+    from { opacity: 0; }
+}
