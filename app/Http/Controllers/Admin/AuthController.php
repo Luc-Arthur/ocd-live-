@@ -14,7 +14,8 @@ class AuthController extends Controller
     public function create(): Response
     {
         return Inertia::render('Admin/Login', [
-            'demo' => app()->environment('local') || config('app.demo', true),
+            // Identifiants de démo masqués par défaut (le lien est public). Mettre OCD_SHOW_DEMO_LOGIN=true pour les afficher.
+            'demo' => (bool) env('OCD_SHOW_DEMO_LOGIN', false),
         ]);
     }
 
