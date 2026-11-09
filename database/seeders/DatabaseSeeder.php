@@ -59,6 +59,8 @@ class DatabaseSeeder extends Seeder
         }
 
         $this->seedDemoBookings($admin);
+
+        $this->call(LiveDirectorySeeder::class);
     }
 
     /** Quelques réservations fictives pour que la démo ait l'air vivante */

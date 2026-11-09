@@ -43,6 +43,11 @@ class HandleInertiaRequests extends Middleware
                 'tiktok' => config('ocdlive.tiktok_account'),
                 'whatsapp' => config('ocdlive.whatsapp'),
             ],
+            'directory' => [
+                'countries' => collect(config('ocdlive.countries'))->map(fn ($c) => ['name' => $c['name'], 'dial' => $c['dial'], 'lon' => $c['lon'], 'lat' => $c['lat']]),
+                'categories' => config('ocdlive.categories'),
+                'price' => config('ocdlive.directory.subscription_price'),
+            ],
             'auth' => [
                 'user' => $request->user()?->only(['name', 'email']),
                 'unread' => fn () => $request->user()?->unreadNotifications()->count() ?? 0,

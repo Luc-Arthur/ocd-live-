@@ -55,6 +55,7 @@ class DashboardController extends Controller
                 'reference' => $n->data['reference'] ?? null,
                 'date' => $n->data['date'] ?? null,
                 'mode' => $n->data['mode'] ?? null,
+                'kind' => $n->data['kind'] ?? 'booking',
                 'unread' => $n->read_at === null,
                 'ago' => $n->created_at->locale('fr')->diffForHumans(),
             ]),

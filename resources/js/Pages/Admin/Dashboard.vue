@@ -48,7 +48,8 @@ onUnmounted(() => clearInterval(timer));
                     <span class="hidden rounded-full bg-white/10 px-3 py-1 text-xs font-semibold sm:inline">Espace équipe</span>
                 </div>
                 <div class="flex items-center gap-4 text-sm">
-                    <span class="hidden text-cream/70 sm:inline">{{ page.props.auth.user?.name }}</span>
+                    <Link href="/admin" class="rounded-full bg-white/10 px-3 py-1.5 font-semibold">Studio</Link>
+                    <Link href="/admin/lives" class="font-semibold text-cream/70 hover:text-cream">Lives à valider</Link>
                     <Link href="/admin/deconnexion" method="post" as="button" class="text-cream/70 hover:text-cream">Déconnexion</Link>
                 </div>
             </div>
@@ -132,7 +133,8 @@ onUnmounted(() => clearInterval(timer));
                                     <p class="leading-snug">{{ n.message }}</p>
                                     <p class="mt-1 text-xs text-cream/50">
                                         {{ n.ago }}
-                                        <button v-if="n.date" type="button" @click="goDay(n.date, { preserveScroll: false })" class="ml-2 text-glow hover:underline">voir le planning</button>
+                                        <button v-if="n.kind === 'live'" type="button" @click="router.get('/admin/lives')" class="ml-2 text-glow hover:underline">valider</button>
+                                        <button v-else-if="n.date" type="button" @click="goDay(n.date, { preserveScroll: false })" class="ml-2 text-glow hover:underline">voir le planning</button>
                                     </p>
                                 </div>
                             </div>

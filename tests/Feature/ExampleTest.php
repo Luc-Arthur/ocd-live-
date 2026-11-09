@@ -2,11 +2,12 @@
 
 namespace Tests\Feature;
 
-// use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class ExampleTest extends TestCase
 {
+    use RefreshDatabase; // l'accueil lit les réservations et les lives : il faut les tables
     /**
      * A basic test example.
      */

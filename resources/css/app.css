@@ -22,6 +22,16 @@
     --color-live: #e5383b;
     --color-leaf: #2f7d4f;
 
+    /* Régie : la salle de contrôle du studio (accueil et /en-direct) */
+    --font-mono: 'JetBrains Mono', ui-monospace, 'Cascadia Mono', Consolas, monospace;
+    --color-regie: #0d0907;
+    --color-regie-panel: #17110d;
+    --color-regie-line: #2c221b;
+    --color-regie-mute: #a8968a; /* texte secondaire sur fond régie (≥ 4.5:1) */
+    --color-tally: #ff3b3b; /* voyant rouge : à l'antenne */
+    --color-preview: #2fd27a; /* voyant vert : aperçu */
+    --color-whatsapp: #25d366;
+
     --shadow-card: 0 1px 0 rgb(28 20 16 / 0.04), 0 12px 32px -16px rgb(28 20 16 / 0.18);
     --shadow-glow: 0 0 0 1px rgb(217 98 43 / 0.25), 0 16px 40px -12px rgb(217 98 43 / 0.45);
 
@@ -187,4 +197,110 @@
 }
 @keyframes fade-in {
     from { opacity: 0; }
+}
+
+/* ------------------------------------------------------------------
+   Régie : accueil (haut de page) et /en-direct
+   ------------------------------------------------------------------ */
+
+/* Page entièrement en régie : fond, barres de défilement et contrôles sombres */
+html.regie {
+    background: var(--color-regie);
+    color-scheme: dark;
+}
+html.regie body {
+    background: var(--color-regie);
+    color: var(--color-cream);
+}
+html.regie ::selection {
+    background: rgb(255 59 59 / 0.35);
+    color: #fff;
+}
+.regie-surface :focus-visible,
+html.regie :focus-visible {
+    outline: 2px solid var(--color-glow);
+    outline-offset: 2px;
+}
+.regie-scroll {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-regie-line) transparent;
+}
+
+/* Voyant d'antenne : respiration lente, pas un clignotement d'alarme */
+@keyframes tally-breathe {
+    50% { opacity: 0.45; }
+}
+.tally-dot {
+    animation: tally-breathe 2.4s ease-in-out infinite;
+}
+.on-air {
+    box-shadow: 0 0 0 1px rgb(255 59 59 / 0.6), 0 0 18px -2px rgb(255 59 59 / 0.75), inset 0 0 10px rgb(255 255 255 / 0.12);
+    text-shadow: 0 0 8px rgb(255 255 255 / 0.45);
+}
+
+/* Signal caméra : lignes de balayage fines par-dessus le dégradé de la catégorie */
+.scanlines {
+    background-image: repeating-linear-gradient(to bottom, rgb(255 255 255 / 0.06) 0 1px, transparent 1px 3px);
+    mix-blend-mode: overlay;
+}
+
+/* Touches de la table de mixage : en relief, s'enfoncent quand on appuie */
+.mix-key {
+    border-bottom-width: 5px;
+    transition: background-color 0.18s ease-out, border-color 0.18s ease-out, color 0.18s ease-out, box-shadow 0.25s ease-out, translate 0.08s ease-out, border-bottom-width 0.08s ease-out;
+}
+.mix-key:active {
+    translate: 0 3px;
+    border-bottom-width: 2px;
+}
+
+/* Un live qui vient d'être validé s'allume en rouge (s'ajoute aux classes notif-*) */
+.monitor.notif-enter-active {
+    animation: tally-flash 1.8s ease-out;
+}
+@keyframes tally-flash {
+    0%, 30% { box-shadow: 0 0 0 3px var(--color-tally), 0 0 36px 4px rgb(255 59 59 / 0.65); }
+}
+
+/* Fil vertical (téléphone) : un vendeur par écran */
+.feed {
+    height: calc(100dvh - 4rem - env(safe-area-inset-bottom, 0px));
+    scroll-snap-type: y mandatory;
+    overscroll-behavior-y: contain;
+    scrollbar-width: none;
+}
+.feed::-webkit-scrollbar { display: none; }
+.feed > * {
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+}
+.no-scrollbar { scrollbar-width: none; }
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.text-shadow-soft { text-shadow: 0 1px 2px rgb(0 0 0 / 0.55), 0 0 12px rgb(0 0 0 / 0.35); }
+
+@keyframes hint-rise {
+    0%, 100% { translate: 0 0; }
+    50% { translate: 0 -5px; }
+}
+.hint-rise { animation: hint-rise 1.8s ease-in-out infinite; }
+
+/* Feuille du bas (catégories) */
+.sheet-enter-active { transition: translate 0.38s var(--ease-out-expo); }
+.sheet-leave-active { transition: translate 0.2s ease-in; }
+.sheet-enter-from, .sheet-leave-to { translate: 0 100%; }
+.veil-enter-active { transition: opacity 0.3s ease-out; }
+.veil-leave-active { transition: opacity 0.2s ease-in; }
+.veil-enter-from, .veil-leave-to { opacity: 0; }
+
+/* Petite note « vendeur de démonstration » */
+.note-enter-active { transition: opacity 0.25s ease-out, translate 0.25s var(--ease-out-expo); }
+.note-leave-active { transition: opacity 0.15s ease-in; }
+.note-enter-from { opacity: 0; translate: 0 6px; }
+.note-leave-to { opacity: 0; }
+
+@media (prefers-reduced-motion: reduce) {
+    .tally-dot, .hint-rise { animation: none; }
+    .monitor.notif-enter-active { animation-duration: 1.8s; }
+    .sheet-enter-from, .sheet-leave-to { translate: none; opacity: 0; }
+    .sheet-enter-active, .sheet-leave-active { transition: opacity 0.25s ease-out; }
 }
